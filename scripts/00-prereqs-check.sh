@@ -1,0 +1,52 @@
+#!/bin/bash
+set -euo pipefail
+
+LOGFILE="logs/00-prereqs.log"
+mkdir -p logs
+exec > >(tee -a "$LOGFILE") 2>&1
+
+EXPECTED_OS="Red Hat Enterprise Linux release 9"
+EXPECTED_HOSTNAME="ipa1.henry-iam.internal"
+
+log_status() {
+  echo -e "\n[+] $1"
+}
+
+fail_exit() {
+  echo -e "\n[✘] $1"
+  exit 1
+}
+
+log_status "🔧 Checking OS version..."
+grep -q "$EXPECTED_OS" /etc/redhat-release || fail_exit "Not RHEL 9!"
+
+log_status "🧑‍💼 Checking user (ec2-user or root)..."
+USER_NAME=$(whoami)
+if [[ "$USER_NAME" != "ec2-user" && "$USER_NAME" != "root" ]]; then
+  fail_exit "Must run as ec2-user or root. Got: $USER_NAME"
+fi
+
+log_status "📡 Checking outbound internet (ping)..."
+ping -c 1 1.1.1.1 > /dev/null || fail_exit "Ping failed!"
+
+log_status "🌐 Checking DNS resolution..."
+getent hosts google.com || fail_exit "DNS resolution failed!"
+
+log_status "📦 Checking required tools (curl, sudo)..."
+command -v curl >/dev/null || fail_exit "curl not installed!"
+command -v sudo >/dev/null || fail_exit "sudo not installed!"
+
+log_status "🕰️ Verifying chronyd time sync status..."
+systemctl is-active chronyd || fail_exit "chronyd not active!"
+chronyc tracking
+
+log_status "🔐 Checking SELinux status..."
+getenforce
+
+log_status "📛 Setting hostname to $EXPECTED_HOSTNAME..."
+sudo hostnamectl set-hostname "$EXPECTED_HOSTNAME"
+hostnamectl
+
+log_status "✅ All prerequisites passed. System is ready."
+
+exit 0

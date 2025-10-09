@@ -1,0 +1,56 @@
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user...
+
+[✘] Not running as ec2-user!
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📡 Checking outbound internet (ping)...
+
+[+] 🌐 Checking DNS resolution...
+2607:f8b0:4004:c09::66 google.com
+2607:f8b0:4004:c09::64 google.com
+2607:f8b0:4004:c09::71 google.com
+2607:f8b0:4004:c09::65 google.com
+
+[+] 📦 Checking required tools (curl, sudo)...
+
+[+] 🕰️ Verifying chronyd time sync status...
+active
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 4
+Ref time (UTC)  : Thu Oct 09 01:47:06 2025
+System time     : 0.000001750 seconds slow of NTP time
+Last offset     : -0.000000549 seconds
+RMS offset      : 0.000015894 seconds
+Frequency       : 4.894 ppm slow
+Residual freq   : +0.000 ppm
+Skew            : 0.495 ppm
+Root delay      : 0.000516882 seconds
+Root dispersion : 0.000407508 seconds
+Update interval : 32.2 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec2c9a067c3c1988a48b3038c28fe770
+         Boot ID: 35085939df4a4d04a5deb016c96e3355
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: t3.small
+Firmware Version: 1.0
+
+[+] ✅ All prerequisites passed. System is ready.
