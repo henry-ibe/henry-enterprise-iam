@@ -1,0 +1,413 @@
+
+[+] 📦 Installing FreeIPA packages...
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered with an entitlement server. You can use "rhc" or "subscription-manager" to register.
+
+Last metadata expiration check: 0:20:03 ago on Thu 09 Oct 2025 03:17:15 AM UTC.
+Package ipa-server-4.12.2-14.el9_6.5.x86_64 is already installed.
+Package ipa-server-dns-4.12.2-14.el9_6.5.noarch is already installed.
+Package bind-32:9.16.23-31.el9_6.x86_64 is already installed.
+Package bind-dyndb-ldap-11.11-3.el9_6.x86_64 is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+
+[+] 🧱 Running ipa-server-install...
+IPA server is already configured on this system.
+If you want to reinstall the IPA server, please uninstall it first using 'ipa-server-install --uninstall'.
+The ipa-server-install command failed. See /var/log/ipaserver-install.log for more information
+
+The log file for this installation can be found in /var/log/ipaserver-install.log
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful
+Ticket cache: FILE:/tmp/krb5cc_setup_29561
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 👥 Creating groups: hr, it_support, sales, admins
+ipa: ERROR: did not receive Kerberos credentials
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful
+Ticket cache: FILE:/tmp/krb5cc_setup_29586
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 👥 Creating groups: hr, it_support, sales, admins
+ipa: ERROR: did not receive Kerberos credentials
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful
+Ticket cache: FILE:/tmp/krb5cc_setup_29632
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 👥 Creating groups: hr, it_support, sales, admins
+ipa: ERROR: did not receive Kerberos credentials
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful
+Ticket cache: FILE:/tmp/krb5cc_setup_29684
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 👥 Creating groups: hr, it_support, sales, admins
+ipa: ERROR: did not receive Kerberos credentials
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+
+[+]    Setting KRB5CCNAME=/tmp/krb5cc_29785
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful
+
+[+]    ✓ Ticket verified
+Ticket cache: FILE:/tmp/krb5cc_29785
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 🔍 Testing IPA connectivity...
+
+[+]    ✓ IPA commands can use Kerberos ticket
+
+[+] 👥 Creating groups: hr, it_support, sales, admins
+----------------
+Added group "hr"
+----------------
+  Group name: hr
+  Description: hr department
+  GID: 1131400003
+
+[+]    ✓ Created group: hr
+------------------------
+Added group "it_support"
+------------------------
+  Group name: it_support
+  Description: it_support department
+  GID: 1131400004
+
+[+]    ✓ Created group: it_support
+-------------------
+Added group "sales"
+-------------------
+  Group name: sales
+  Description: sales department
+  GID: 1131400005
+
+[+]    ✓ Created group: sales
+
+[+]    ⚠️ Group 'admins' already exists
+
+[+] 👤 Creating demo users with auto-passwords...
+sarah: byupX4UE+P4L (hr)
+------------------
+Added user "sarah"
+------------------
+  User login: sarah
+  First name: Sarah
+  Last name: Demo
+  Full name: Sarah Demo
+  Display name: Sarah Demo
+  Initials: SD
+  Home directory: /home/sarah
+  GECOS: Sarah Demo
+  Login shell: /bin/sh
+  Principal name: sarah@HENRY-IAM.INTERNAL
+  Principal alias: sarah@HENRY-IAM.INTERNAL
+  User password expiration: 20251009035012Z
+  Email address: sarah@henry-iam.internal
+  UID: 1131400006
+  GID: 1131400006
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+  Group name: hr
+  Description: hr department
+  GID: 1131400003
+  Member users: sarah
+-------------------------
+Number of members added 1
+-------------------------
+
+[+]    ✓ Created user: sarah in hr
+ivy: qBqXj8niRZ10 (sales)
+----------------
+Added user "ivy"
+----------------
+  User login: ivy
+  First name: Ivy
+  Last name: Demo
+  Full name: Ivy Demo
+  Display name: Ivy Demo
+  Initials: ID
+  Home directory: /home/ivy
+  GECOS: Ivy Demo
+  Login shell: /bin/sh
+  Principal name: ivy@HENRY-IAM.INTERNAL
+  Principal alias: ivy@HENRY-IAM.INTERNAL
+  User password expiration: 20251009035013Z
+  Email address: ivy@henry-iam.internal
+  UID: 1131400007
+  GID: 1131400007
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+  Group name: sales
+  Description: sales department
+  GID: 1131400005
+  Member users: ivy
+-------------------------
+Number of members added 1
+-------------------------
+
+[+]    ✓ Created user: ivy in sales
+adam: 5w95AYr0foiI (it_support)
+-----------------
+Added user "adam"
+-----------------
+  User login: adam
+  First name: Adam
+  Last name: Demo
+  Full name: Adam Demo
+  Display name: Adam Demo
+  Initials: AD
+  Home directory: /home/adam
+  GECOS: Adam Demo
+  Login shell: /bin/sh
+  Principal name: adam@HENRY-IAM.INTERNAL
+  Principal alias: adam@HENRY-IAM.INTERNAL
+  User password expiration: 20251009035015Z
+  Email address: adam@henry-iam.internal
+  UID: 1131400008
+  GID: 1131400008
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+  Group name: it_support
+  Description: it_support department
+  GID: 1131400004
+  Member users: adam
+-------------------------
+Number of members added 1
+-------------------------
+
+[+]    ✓ Created user: adam in it_support
+lucas: zOCxaDWtaIYz (admins)
+------------------
+Added user "lucas"
+------------------
+  User login: lucas
+  First name: Lucas
+  Last name: Demo
+  Full name: Lucas Demo
+  Display name: Lucas Demo
+  Initials: LD
+  Home directory: /home/lucas
+  GECOS: Lucas Demo
+  Login shell: /bin/sh
+  Principal name: lucas@HENRY-IAM.INTERNAL
+  Principal alias: lucas@HENRY-IAM.INTERNAL
+  User password expiration: 20251009035016Z
+  Email address: lucas@henry-iam.internal
+  UID: 1131400009
+  GID: 1131400009
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+  Group name: admins
+  Description: Account administrators group
+  GID: 1131400000
+  Member users: admin, lucas
+-------------------------
+Number of members added 1
+-------------------------
+
+[+]    ✓ Created user: lucas in admins
+
+[+] 📄 Passwords saved to logs/user-passwords.txt
+
+[+] 🤖 Creating Keycloak service account...
+-------------------------
+Added user "svc-keycloak"
+-------------------------
+  User login: svc-keycloak
+  First name: Keycloak
+  Last name: Service
+  Full name: Keycloak Service
+  Display name: Keycloak Service
+  Initials: KS
+  Home directory: /home/svc-keycloak
+  GECOS: Keycloak Service
+  Login shell: /bin/sh
+  Principal name: svc-keycloak@HENRY-IAM.INTERNAL
+  Principal alias: svc-keycloak@HENRY-IAM.INTERNAL
+  User password expiration: 20251009035017Z
+  Email address: svc-keycloak@henry-iam.internal
+  UID: 1131400010
+  GID: 1131400010
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+
+[+]    ✓ Created svc-keycloak
+
+[+] 🚀 FreeIPA seeding complete!
+
+═══════════════════════════════════════════════════════════════
+Users:
+  • adam
+  • admin
+  • ivy
+  • lucas
+  • sarah
+  • svc-keycloak
+
+Groups:
+  • admins
+  • editors
+  • hr
+  • ipausers
+  • it_support
+  • sales
+  • trust
+
+Credentials: logs/user-passwords.txt
+Service Account: /etc/henry-portal/keycloak-bind.env
+═══════════════════════════════════════════════════════════════
+
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+
+[+]    Setting KRB5CCNAME=/tmp/krb5cc_34457
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful
+
+[+]    ✓ Ticket verified
+Ticket cache: FILE:/tmp/krb5cc_34457
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 🔍 Testing IPA connectivity...
+
+[+]    ✓ IPA commands can use Kerberos ticket
+
+[+] 👥 Creating groups: hr, it_support, sales, admins
+
+[+]    ⚠️ Group 'hr' already exists
+
+[+]    ⚠️ Group 'it_support' already exists
+
+[+]    ⚠️ Group 'sales' already exists
+
+[+]    ⚠️ Group 'admins' already exists
+
+[+] 👤 Creating demo users with auto-passwords...
+
+[+]    ⚠️ User 'sarah' already exists
+  Group name: hr
+  Description: hr department
+  GID: 1131400003
+  Member users: sarah
+  Failed members: 
+    member user: sarah: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+]    ⚠️ User 'ivy' already exists
+  Group name: sales
+  Description: sales department
+  GID: 1131400005
+  Member users: ivy
+  Failed members: 
+    member user: ivy: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+]    ⚠️ User 'adam' already exists
+  Group name: it_support
+  Description: it_support department
+  GID: 1131400004
+  Member users: adam
+  Failed members: 
+    member user: adam: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+]    ⚠️ User 'lucas' already exists
+  Group name: admins
+  Description: Account administrators group
+  GID: 1131400000
+  Member users: admin, lucas
+  Failed members: 
+    member user: lucas: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+] 📄 Passwords saved to logs/user-passwords.txt
+
+[+] 🤖 Creating Keycloak service account...
+
+[+] 🚀 FreeIPA seeding complete!
+
+═══════════════════════════════════════════════════════════════
+Users:
+  • adam
+  • admin
+  • ivy
+  • lucas
+  • sarah
+  • svc-keycloak
+
+Groups:
+  • admins
+  • editors
+  • hr
+  • ipausers
+  • it_support
+  • sales
+  • trust
+
+Credentials: logs/user-passwords.txt
+Service Account: /etc/henry-portal/keycloak-bind.env
+═══════════════════════════════════════════════════════════════
+
