@@ -1,0 +1,298 @@
+version: '3.8'
+
+services:
+  # ==================== BACKEND SERVICES ====================
+  
+  # PostgreSQL for Keycloak
+  keycloak-db:
+    image: postgres:15-alpine
+    container_name: phase60-keycloak-db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis for OAuth2-Proxy session storage
+  redis:
+    image: redis:7-alpine
+    container_name: phase60-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==================== AUTHENTICATION ====================
+  
+  # Keycloak Identity Provider
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: phase60-keycloak
+    command: start-dev --import-realm
+    ports: 
+      - "8081:8080" 
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: edge
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json:ro
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  # OAuth2-Proxy authentication gateway
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.5.1
+    container_name: phase60-oauth2-proxy
+    command:
+      - --config=/etc/oauth2-proxy.cfg
+    volumes:
+      - ./oauth2-proxy/oauth2-proxy.cfg:/etc/oauth2-proxy.cfg:ro
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - keycloak
+      - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal.rule=Host(`portal.henry-enterprise.local`)"
+      - "traefik.http.routers.portal.entrypoints=websecure"
+      - "traefik.http.routers.portal.tls=true"  # ADD THIS LINE
+      - "traefik.http.routers.portal.priority=100"
+      - "traefik.http.routers.portal.service=phase60-oauth2-proxy@docker"
+      - "traefik.http.services.phase60-oauth2-proxy.loadbalancer.server.port=4180"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:4180/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ==================== APPLICATION LAYER ====================
+  
+  # Portal Router - Smart role-based routing
+  portal-router:
+    build:
+      context: ./portal-router
+      dockerfile: Dockerfile
+    container_name: phase60-portal-router
+    networks:
+      - frontend
+    depends_on:
+      - hr-dashboard
+      - it-dashboard
+      - sales-dashboard
+      - admin-dashboard
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8500/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # HR Dashboard
+  hr-dashboard:
+    build:
+      context: ./dashboards/hr
+      dockerfile: Dockerfile
+    container_name: phase60-hr-dashboard
+    networks:
+      - frontend
+    environment:
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # IT Dashboard
+  it-dashboard:
+    build:
+      context: ./dashboards/it
+      dockerfile: Dockerfile
+    container_name: phase60-it-dashboard
+    networks:
+      - frontend
+    environment:
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # Sales Dashboard
+  sales-dashboard:
+    build:
+      context: ./dashboards/sales
+      dockerfile: Dockerfile
+    container_name: phase60-sales-dashboard
+    networks:
+      - frontend
+    environment:
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # Admin Dashboard
+  admin-dashboard:
+    build:
+      context: ./dashboards/admin
+      dockerfile: Dockerfile
+    container_name: phase60-admin-dashboard
+    networks:
+      - frontend
+    environment:
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # ==================== FRONTEND ====================
+  
+  # Public Website
+  public-site:
+    image: nginx:alpine
+    container_name: phase60-public-site
+    volumes:
+      - ./public-site:/usr/share/nginx/html:ro
+      - ./public-site/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.public.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.public.entrypoints=websecure"
+      - "traefik.http.routers.public.middlewares=security-headers@file"
+      - "traefik.http.services.public.loadbalancer.server.port=80"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ==================== REVERSE PROXY ====================
+  
+  # Traefik Reverse Proxy
+  traefik:
+    image: traefik:v2.10
+    container_name: phase60-traefik
+      # command:
+      # - --api.dashboard=true
+      # - --api.insecure=true
+      # - --providers.docker=true
+      # - --providers.docker.exposedbydefault=false
+      # - --providers.docker.network=phase60_frontend
+      # - --providers.file.filename=/etc/traefik/dynamic-config.yml
+      # - --entrypoints.web.address=:80
+      # - --entrypoints.websecure.address=:443
+      # - --log.level=INFO
+      # - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8088:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic-config.yml:/etc/traefik/dynamic-config.yml:ro
+      - traefik-logs:/var/log/traefik
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ==================== MONITORING (OPTIONAL) ====================
+  
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: phase60-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - backend
+      - frontend
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  keycloak-db-data:
+  redis-data:
+  traefik-logs:
+  prometheus-data:
