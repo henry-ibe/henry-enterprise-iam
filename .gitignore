@@ -1,0 +1,27 @@
+# Environment files with secrets
+.env
+*.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# Docker volumes data
+**/data/
+**/postgres-data/
+**/redis-data/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

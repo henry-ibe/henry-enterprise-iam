@@ -48,3 +48,163 @@ Operating System: Red Hat Enterprise Linux 9.6 (Plow)
 Firmware Version: 1.0
 
 [+] ✅ All prerequisites passed. System is ready.
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📡 Checking outbound internet (ping)...
+
+[+] 🌐 Checking DNS resolution...
+
+[✘] DNS resolution failed!
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[1;33mDNS lookup failed; attempting self-heal...[0m
+Error: unknown connection 'eth0'.
+
+[✘] DNS self-heal failed; check /etc/resolv.conf and NetworkManager.
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo, nmcli, lsattr)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[1;33mDNS lookup failed; attempting automated self-heal...[0m
+[0;32mDNS restored via resolv.conf + NetworkManager.[0m
+
+[+] 🕰️ Verifying chronyd time sync status...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Fri Oct 10 04:57:48 2025
+System time     : 0.000000467 seconds fast of NTP time
+Last offset     : -0.000000125 seconds
+RMS offset      : 0.000000722 seconds
+Frequency       : 1.534 ppm fast
+Residual freq   : +0.000 ppm
+Skew            : 0.020 ppm
+Root delay      : 0.000121409 seconds
+Root dispersion : 0.000029986 seconds
+Update interval : 16.2 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec298850e63769618fb341d6827fb33c
+         Boot ID: 9a5112f24cab4e429ebfda07e33ba2b2
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: c7i-flex.large
+Firmware Version: 1.0
+[0;32m✅ All prerequisites passed. System is ready.[0m
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo, nmcli, lsattr)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[0;32mDNS looks good.[0m
+
+[+] 🕰️ Verifying chronyd time sync status...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Sat Oct 11 04:19:42 2025
+System time     : 0.000001885 seconds fast of NTP time
+Last offset     : +0.000001189 seconds
+RMS offset      : 0.000012423 seconds
+Frequency       : 0.888 ppm fast
+Residual freq   : +0.001 ppm
+Skew            : 0.180 ppm
+Root delay      : 0.000153749 seconds
+Root dispersion : 0.000052969 seconds
+Update interval : 64.5 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec298850e63769618fb341d6827fb33c
+         Boot ID: f1c583b60b6843aca127fa95f065e188
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: c7i-flex.large
+Firmware Version: 1.0
+[0;32m✅ All prerequisites passed. System is ready.[0m
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo, nmcli, lsattr)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[0;32mDNS looks good.[0m
+
+[+] 🕰️ Verifying chronyd time sync status...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Sat Oct 11 08:07:36 2025
+System time     : 0.000007014 seconds fast of NTP time
+Last offset     : +0.000011386 seconds
+RMS offset      : 0.000085825 seconds
+Frequency       : 6.996 ppm fast
+Residual freq   : +0.006 ppm
+Skew            : 0.659 ppm
+Root delay      : 0.000151590 seconds
+Root dispersion : 0.000061508 seconds
+Update interval : 16.2 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec298850e63769618fb341d6827fb33c
+         Boot ID: d3e3a8fb4e7a4350a544308c3a27c44e
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: c7i-flex.large
+Firmware Version: 1.0
+[0;32m✅ All prerequisites passed. System is ready.[0m

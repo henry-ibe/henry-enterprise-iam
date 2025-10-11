@@ -1,0 +1,193 @@
+{
+  "realm": "henry-enterprise",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginTheme": "keycloak",
+  "accountTheme": "keycloak",
+  "adminTheme": "keycloak",
+  "emailTheme": "keycloak",
+  "accessTokenLifespan": 300,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "roles": {
+    "realm": [
+      {
+        "name": "hr",
+        "description": "Human Resources role - access to HR portal",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "it_support",
+        "description": "IT Support role - access to IT portal",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "sales",
+        "description": "Sales role - access to sales portal",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin",
+        "description": "Administrator role - full access to all portals",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "employee-portal",
+      "name": "Employee Portal",
+      "description": "OAuth2 client for employee portal access",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "https://portal.henry-enterprise.local/*",
+        "https://portal.henry-enterprise.local/oauth2/callback",
+        "http://portal.henry-enterprise.local/*",
+        "http://portal.henry-enterprise.local/oauth2/callback"
+      ],
+      "webOrigins": ["+"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+"
+      },
+      "secret": "KbWKYEPZ7P3k0k6AHPiDPyjn1pN0jLSm",
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "email",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "email",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "preferred_username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "username",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "alice.hr",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "alice@henry-enterprise.local",
+      "firstName": "Alice",
+      "lastName": "Henderson",
+      "realmRoles": ["hr"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "HRPass123!",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "bob.it",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "bob@henry-enterprise.local",
+      "firstName": "Bob",
+      "lastName": "Technical",
+      "realmRoles": ["it_support"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ITPass123!",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "carol.sales",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "carol@henry-enterprise.local",
+      "firstName": "Carol",
+      "lastName": "Seller",
+      "realmRoles": ["sales"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "SalesPass123!",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "admin@henry-enterprise.local",
+      "firstName": "System",
+      "lastName": "Administrator",
+      "realmRoles": ["admin", "hr", "it_support", "sales"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "AdminPass123!",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

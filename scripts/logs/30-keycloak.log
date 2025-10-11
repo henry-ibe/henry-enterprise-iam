@@ -13,3 +13,4 @@ Complete!
 
 [+] 🧪 Creating Keycloak bind environment file...
 grep: logs/user-passwords.txt: No such file or directory
+[0;32m✔ Keycloak already installed. Skipping.[0m

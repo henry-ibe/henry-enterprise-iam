@@ -2224,3 +2224,5 @@ files is the Directory Manager password
 
 [+] 👥 Creating groups: hr, it_support, sales, admins
 ipa: ERROR: did not receive Kerberos credentials
+
+[+] ⚠️  FreeIPA already seeded. Skipping.

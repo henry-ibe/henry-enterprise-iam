@@ -411,3 +411,138 @@ Credentials: logs/user-passwords.txt
 Service Account: /etc/henry-portal/keycloak-bind.env
 ═══════════════════════════════════════════════════════════════
 
+
+[+] ⚠️  FreeIPA is already installed - skipping installation
+
+[+] 🎫 Authenticating with Kerberos...
+
+[+]    Setting KRB5CCNAME=/tmp/krb5cc_13513
+kinit: Cannot contact any KDC for realm 'HENRY-IAM.INTERNAL' while getting initial credentials
+
+[+] ❌ Kerberos authentication failed
+
+[+] ⚙️  FreeIPA already installed - skipping installation
+
+[+] 🩺 Checking FreeIPA service health...
+[1;33mRestarting ipa...[0m
+[1;33mRestarting dirsrv...[0m
+Failed to restart dirsrv.service: Unit dirsrv.service not found.
+[1;33mRestarting named-pkcs11...[0m
+Failed to restart named-pkcs11.service: Unit named-pkcs11.service is masked.
+
+[+]    ✓ IPA health check complete.
+
+[+] 🎫 Authenticating with Kerberos...
+
+[+]    Using KRB5CCNAME=/tmp/krb5cc_13555
+Password for admin@HENRY-IAM.INTERNAL: 
+
+[+] ✅ Kerberos authentication successful (attempt 1)
+Ticket cache: FILE:/tmp/krb5cc_13555
+Default principal: admin@HENRY-IAM.INTERNAL
+
+
+[+] 🔍 Verifying IPA connectivity...
+
+[+]    ✓ IPA CLI access confirmed
+
+[+] 👥 Creating groups (hr, it_support, sales, admins)...
+
+[+]    ⚙️  Group 'hr' exists
+
+[+]    ⚙️  Group 'it_support' exists
+
+[+]    ⚙️  Group 'sales' exists
+
+[+]    ⚙️  Group 'admins' exists
+
+[+] 👤 Creating demo users...
+
+[+]    ⚙️  User 'sarah' exists
+  Group name: hr
+  Description: hr department
+  GID: 1131400003
+  Member users: sarah
+  Failed members: 
+    member user: sarah: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+]    ⚙️  User 'ivy' exists
+  Group name: sales
+  Description: sales department
+  GID: 1131400005
+  Member users: ivy
+  Failed members: 
+    member user: ivy: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+]    ⚙️  User 'adam' exists
+  Group name: it_support
+  Description: it_support department
+  GID: 1131400004
+  Member users: adam
+  Failed members: 
+    member user: adam: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+]    ⚙️  User 'lucas' exists
+  Group name: admins
+  Description: Account administrators group
+  GID: 1131400000
+  Member users: admin, lucas
+  Failed members: 
+    member user: lucas: This entry is already a member
+    member group: 
+    member service: 
+    member User ID override: 
+-------------------------
+Number of members added 0
+-------------------------
+
+[+] 📄 Passwords saved to logs/user-passwords.txt
+
+[+] 🤖 Creating Keycloak service account...
+
+[+]    ⚙️  Keycloak service account already exists
+
+[+] 🚀 FreeIPA seeding complete!
+
+═══════════════════════════════════════════════════════════════
+Users:
+  • adam
+  • admin
+  • ivy
+  • lucas
+  • sarah
+  • svc-keycloak
+
+Groups:
+  • admins
+  • editors
+  • hr
+  • ipausers
+  • it_support
+  • sales
+  • trust
+
+Credentials: logs/user-passwords.txt
+Service Account: /etc/henry-portal/keycloak-bind.env
+═══════════════════════════════════════════════════════════════
+
+
+[+] ⚠️  FreeIPA already seeded. Skipping.
