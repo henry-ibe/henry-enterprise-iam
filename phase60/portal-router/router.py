@@ -1,187 +1,176 @@
 #!/usr/bin/env python3
 """
-Portal Router - Smart role-based routing for Henry Enterprise Portal
-Routes authenticated users to appropriate dashboards based on their roles
+Henry Enterprise IAM - Portal Router (Phase 70)
+-----------------------------------------------
+OIDC-enabled Flask router for Keycloak + FreeIPA + MFA (Google Authenticator).
+Routes authenticated users to the correct dashboard based on Keycloak roles.
+
+Author: Henry Enterprise IAM Project
 """
 
-from flask import Flask, request, Response
+import os
+import json
 import logging
 import requests
-from utils.auth import extract_roles, validate_headers, get_primary_role
+import jwt
+from urllib.parse import urlencode
+from flask import Flask, request, redirect, session, jsonify, Response
+from dotenv import load_dotenv
 from utils.logging_config import setup_logging
 
+# ────────────────────────────────────────────────────────────────
+# Flask Setup
+# ────────────────────────────────────────────────────────────────
+load_dotenv()
 app = Flask(__name__)
 setup_logging()
 logger = logging.getLogger(__name__)
 
-# Role to upstream service mapping
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "supersecretkey-change-me")
+
+# ────────────────────────────────────────────────────────────────
+# OIDC / Keycloak Configuration
+# ────────────────────────────────────────────────────────────────
+OIDC_ISSUER = os.getenv("OIDC_ISSUER", "http://keycloak:8080/realms/henry-enterprise")
+OIDC_CLIENT_ID = os.getenv("OIDC_CLIENT_ID", "employee-portal")
+OIDC_CLIENT_SECRET = os.getenv("OIDC_CLIENT_SECRET", "changeme")
+OIDC_REDIRECT_URI = os.getenv("OIDC_REDIRECT_URI", "http://portal-router:5000/oidc/callback")
+
+# ────────────────────────────────────────────────────────────────
+# Role → Service Mapping
+# ────────────────────────────────────────────────────────────────
 ROLE_SERVICES = {
-    'admin': 'http://admin-dashboard:8504',
-    'hr': 'http://hr-dashboard:8501',
-    'it_support': 'http://it-dashboard:8502',
-    'sales': 'http://sales-dashboard:8503',
+    "admin": "http://admin-dashboard:8504",
+    "hr": "http://hr-dashboard:8501",
+    "it_support": "http://it-dashboard:8502",
+    "sales": "http://sales-dashboard:8503",
 }
+ROLE_PRECEDENCE = ["admin", "hr", "it_support", "sales"]
 
-# Role precedence (highest to lowest priority)
-ROLE_PRECEDENCE = ['admin', 'hr', 'it_support', 'sales']
+# ────────────────────────────────────────────────────────────────
+# Health Endpoints
+# ────────────────────────────────────────────────────────────────
+@app.route("/healthz")
+def health_check():
+    return jsonify({"service": "portal-router", "status": "ok"}), 200
 
-@app.before_request
-def log_request():
-    """Log all incoming requests"""
-    logger.info(f"Request: {request.method} {request.path}")
-    logger.debug(f"Headers: {dict(request.headers)}")
+@app.route("/status")
+def status_page():
+    return "<h2>✅ Portal Router (OIDC) is running.</h2>", 200
 
-@app.route('/health')
-def health():
-    """Health check endpoint"""
-    return {'status': 'healthy', 'service': 'portal-router'}, 200
+# ────────────────────────────────────────────────────────────────
+# OIDC Login Flow
+# ────────────────────────────────────────────────────────────────
+@app.route("/login")
+def login():
+    """Redirect user to Keycloak for login."""
+    auth_url = f"{OIDC_ISSUER}/protocol/openid-connect/auth"
+    params = {
+        "client_id": OIDC_CLIENT_ID,
+        "redirect_uri": OIDC_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid profile email",
+    }
+    return redirect(f"{auth_url}?{urlencode(params)}")
 
-@app.route('/ready')
-def ready():
-    """Readiness check endpoint"""
-    # Check if we can reach at least one dashboard
+@app.route("/oidc/callback")
+def oidc_callback():
+    """Handle redirect back from Keycloak and exchange code for tokens."""
+    code = request.args.get("code")
+    if not code:
+        return Response("Missing authorization code", 400)
+
+    token_url = f"{OIDC_ISSUER}/protocol/openid-connect/token"
+    data = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": OIDC_REDIRECT_URI,
+        "client_id": OIDC_CLIENT_ID,
+        "client_secret": OIDC_CLIENT_SECRET,
+    }
+
+    r = requests.post(token_url, data=data)
+    if r.status_code != 200:
+        logger.error(f"Token exchange failed: {r.text}")
+        return Response("Authentication failed", 401)
+
+    tokens = r.json()
+    id_token = tokens.get("id_token")
+    access_token = tokens.get("access_token")
+
+    # Decode token (Keycloak already enforces MFA before issuing)
     try:
-        resp = requests.get('http://hr-dashboard:8501/_stcore/health', timeout=2)
-        if resp.status_code == 200:
-            return {'status': 'ready', 'service': 'portal-router'}, 200
-    except:
-        pass
-    return {'status': 'not ready'}, 503
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def route_to_dashboard(path):
-    """
-    Main routing function - directs users to appropriate dashboard
-    based on their roles from OAuth2-Proxy headers
-    """
-    
-    # Validate authentication headers
-    if not validate_headers(request.headers):
-        logger.warning("Invalid or missing authentication headers")
-        return Response(
-            "<html><body><h1>401 Unauthorized</h1>"
-            "<p>Invalid authentication headers. Please log in again.</p>"
-            "<a href='/oauth2/sign_out'>Sign Out</a></body></html>",
-            status=401,
-            mimetype='text/html'
-        )
-    
-    # Extract user information from headers
-    email = request.headers.get('X-Auth-Request-Email')
-    user = request.headers.get('X-Auth-Request-User', 'unknown')
-    roles_header = request.headers.get('X-Auth-Request-Groups', '')
-    
-    # Parse roles
-    roles = extract_roles(roles_header)
-    
-    if not roles:
-        logger.warning(f"No roles found for user {email}")
-        return Response(
-            "<html><body><h1>403 Access Denied</h1>"
-            "<p>No roles assigned to your account. Please contact your administrator.</p>"
-            f"<p>User: {email}</p>"
-            "<a href='/oauth2/sign_out'>Sign Out</a></body></html>",
-            status=403,
-            mimetype='text/html'
-        )
-    
-    # Determine primary role based on precedence
-    primary_role = get_primary_role(roles, ROLE_PRECEDENCE)
-    
-    if not primary_role:
-        logger.warning(f"User {email} has unrecognized roles: {roles}")
-        return Response(
-            "<html><body><h1>403 Access Denied</h1>"
-            "<p>Invalid role assignment. Please contact your administrator.</p>"
-            f"<p>User: {email}</p>"
-            f"<p>Roles: {', '.join(roles)}</p>"
-            "<a href='/oauth2/sign_out'>Sign Out</a></body></html>",
-            status=403,
-            mimetype='text/html'
-        )
-    
-    # Get target service for the primary role
-    target_service = ROLE_SERVICES.get(primary_role)
-    
-    if not target_service:
-        logger.error(f"No service configured for role {primary_role}")
-        return Response(
-            "<html><body><h1>500 Internal Server Error</h1>"
-            "<p>Service configuration error. Please contact support.</p></body></html>",
-            status=500,
-            mimetype='text/html'
-        )
-    
-    # Log successful routing
-    logger.info(f"✅ Routing user {email} (role: {primary_role}) to {target_service}/{path}")
-    
-    # Proxy the request to the appropriate dashboard
-    try:
-        target_url = f"{target_service}/{path}"
-        
-        # Prepare headers to forward
-        forward_headers = {
-            'X-User-Email': email,
-            'X-User-Roles': ','.join(roles),
-            'X-Primary-Role': primary_role,
-            'X-Forwarded-For': request.headers.get('X-Forwarded-For', request.remote_addr),
-            'X-Forwarded-Proto': request.headers.get('X-Forwarded-Proto', 'http'),
-        }
-        
-        # Forward the request
-        resp = requests.request(
-            method=request.method,
-            url=target_url,
-            headers=forward_headers,
-            data=request.get_data(),
-            cookies=request.cookies,
-            allow_redirects=False,
-            timeout=30,
-            stream=True
-        )
-        
-        # Prepare response headers
-        excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
-        headers = [
-            (name, value) for (name, value) in resp.raw.headers.items()
-            if name.lower() not in excluded_headers
-        ]
-        
-        # Create and return response
-        response = Response(
-            resp.iter_content(chunk_size=8192),
-            resp.status_code,
-            headers
-        )
-        return response
-        
-    except requests.exceptions.ConnectionError as e:
-        logger.error(f"Connection error to {target_service}: {str(e)}")
-        return Response(
-            "<html><body><h1>503 Service Unavailable</h1>"
-            f"<p>The {primary_role} dashboard is currently unavailable.</p>"
-            "<p>Please try again later.</p></body></html>",
-            status=503,
-            mimetype='text/html'
-        )
-    except requests.exceptions.Timeout as e:
-        logger.error(f"Timeout connecting to {target_service}: {str(e)}")
-        return Response(
-            "<html><body><h1>504 Gateway Timeout</h1>"
-            f"<p>The {primary_role} dashboard is taking too long to respond.</p>"
-            "<p>Please try again later.</p></body></html>",
-            status=504,
-            mimetype='text/html'
+        decoded = jwt.decode(
+            id_token,
+            options={"verify_signature": False},  # Disable for HTTP/dev only
+            algorithms=["RS256"],
         )
     except Exception as e:
-        logger.error(f"Unexpected error proxying to {target_service}: {str(e)}")
-        return Response(
-            "<html><body><h1>500 Internal Server Error</h1>"
-            "<p>An unexpected error occurred. Please contact support.</p></body></html>",
-            status=500,
-            mimetype='text/html'
-        )
+        logger.exception(f"Token decode failed: {e}")
+        return Response("Invalid token", 401)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8500, debug=False)
+    session["id_token"] = id_token
+    session["access_token"] = access_token
+    session["userinfo"] = decoded
+
+    logger.info(f"User {decoded.get('preferred_username')} authenticated via OIDC")
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    logout_url = f"{OIDC_ISSUER}/protocol/openid-connect/logout?client_id={OIDC_CLIENT_ID}&post_logout_redirect_uri={OIDC_REDIRECT_URI}"
+    return redirect(logout_url)
+
+# ────────────────────────────────────────────────────────────────
+# Main Routing Logic
+# ────────────────────────────────────────────────────────────────
+@app.route("/", methods=["GET"])
+def route_user():
+    """Route authenticated users based on Keycloak roles."""
+    if "userinfo" not in session:
+        return redirect("/login")
+
+    userinfo = session["userinfo"]
+    roles = userinfo.get("realm_access", {}).get("roles", [])
+    username = userinfo.get("preferred_username", "unknown")
+
+    logger.info(f"Routing user={username}, roles={roles}")
+    role = next((r for r in ROLE_PRECEDENCE if r in roles), None)
+
+    if not role:
+        logger.warning(f"No matching role for {username}")
+        return Response("Forbidden: no matching role", 403)
+
+    target = ROLE_SERVICES.get(role)
+    if not target:
+        logger.error(f"No configured service for role={role}")
+        return Response("Role misconfiguration", 500)
+
+    logger.info(f"Forwarding {username} ({role}) → {target}")
+    try:
+        resp = requests.get(target)
+        return redirect(target)
+    except Exception as e:
+        logger.exception(f"Backend unreachable: {e}")
+        return Response("Dashboard unreachable", 503)
+
+# ────────────────────────────────────────────────────────────────
+# Error Handlers
+# ────────────────────────────────────────────────────────────────
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "route not found", "path": request.path}), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    logger.exception(f"Internal error: {e}")
+    return jsonify({"error": "internal server error"}), 500
+
+# ────────────────────────────────────────────────────────────────
+# Entry Point
+# ────────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    logger.info("Starting Portal Router (OIDC) on 0.0.0.0:5000 ...")
+    app.run(host="0.0.0.0", port=5000, debug=False)
+

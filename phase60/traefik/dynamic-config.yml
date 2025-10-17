@@ -1,9 +1,21 @@
-# Traefik Dynamic Configuration
-# This file defines middlewares and other dynamic settings
+# ============================================================
+# Henry Enterprise - Traefik Dynamic Configuration (Phase 60)
+# Routes: OAuth2-Proxy → Portal Router + Public Site
+# ============================================================
 
 http:
   middlewares:
-    # Security Headers Middleware
+    oauth2-auth:
+      forwardAuth:
+        address: http://phase60-oauth2-proxy:4180/auth
+        trustForwardHeader: true
+        authResponseHeaders:
+          - X-Auth-Request-Email
+          - X-Auth-Request-User
+          - X-Auth-Request-Preferred-Username
+          - X-Auth-Request-Roles
+          - X-Auth-Request-Groups
+
     security-headers:
       headers:
         frameDeny: true
@@ -15,31 +27,53 @@ http:
         stsSeconds: 31536000
         customResponseHeaders:
           X-Robots-Tag: "none,noarchive,nosnippet"
-          Server: ""  # Hide server header
-    
-    # OAuth2 Proxy Forward Auth Middleware
-    oauth2-auth:
-      forwardAuth:
-        address: http://oauth2-proxy:4180/oauth2/auth
-        trustForwardHeader: true
-        authResponseHeaders:
-          - X-Auth-Request-Email
-          - X-Auth-Request-User
-          - X-Auth-Request-Groups
-          - X-Auth-Request-Preferred-Username
-    
-    # Rate Limiting Middleware
+          Server: ""
+
     rate-limit:
       rateLimit:
         average: 100
         burst: 50
         period: 1m
-    
-    # Compression Middleware
+
     compression:
       compress: {}
 
-# TLS Configuration
+  routers:
+    # =========================================
+    # Employee Portal Router (Flask/Gunicorn)
+    # =========================================
+    portal:
+      rule: "Host(`portal.henry-enterprise.local`)"
+      entryPoints:
+        - web
+      service: portal-router
+      middlewares:
+        - oauth2-auth
+        - security-headers
+        - compression
+
+    # =========================================
+    # Public Company Website (Nginx)
+    # =========================================
+    public:
+      rule: "Host(`henry-enterprise.local`)"
+      entryPoints:
+        - web
+      service: public-site
+      middlewares:
+        - security-headers
+        - compression
+
+  services:
+    portal-router:
+      loadBalancer:
+        servers:
+          - url: "http://phase60-portal-router:8500"
+    public-site:
+      loadBalancer:
+        servers:
+          - url: "http://phase60-public-site:80"
+
 tls:
   options:
     default:
@@ -49,3 +83,4 @@ tls:
         - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
         - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+

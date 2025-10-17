@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Login - Henry Enterprise LLC{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 500px;
+        margin: 50px auto;
+    }
+    
+    .login-card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .security-badge {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        padding: 12px;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+    
+    .security-badge i {
+        color: #4caf50;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="login-container">
+        <div class="card login-card">
+            <div class="login-header text-center">
+                <h2><i class="bi bi-building"></i> Henry Enterprise LLC</h2>
+                <p class="mb-0">Employee Portal Login</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="POST" action="/employee/login">
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person"></i> Username
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" 
+                               name="username" 
+                               value="{{ username or '' }}"
+                               placeholder="Enter your username"
+                               required 
+                               autofocus>
+                        <small class="form-text text-muted">
+                            Use your FreeIPA username (e.g., sarah, adam, ivy, lucas)
+                        </small>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Enter your password"
+                               required>
+                    </div>
+
+                    <!-- Department Selection -->
+                    <div class="mb-3">
+                        <label for="department" class="form-label">
+                            <i class="bi bi-briefcase"></i> Department
+                        </label>
+                        <select class="form-select" 
+                                id="department" 
+                                name="department" 
+                                required>
+                            <option value="">-- Select Your Department --</option>
+                            {% for dept in departments %}
+                                <option value="{{ dept }}" {% if department == dept %}selected{% endif %}>
+                                    {{ dept }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-text text-muted">
+                            Select the department you want to access
+                        </small>
+                    </div>
+
+                    <!-- Security Notice -->
+                    <div class="security-badge">
+                        <i class="bi bi-shield-check"></i>
+                        <strong>Two-Factor Authentication Required</strong><br>
+                        <small>You'll be prompted for your authenticator code after login</small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Continue to Verification
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <!-- TOTP Enrollment Link -->
+                <div class="alert alert-warning small">
+                    <strong><i class="bi bi-qr-code"></i> First time?</strong><br>
+                    You need to enroll your authenticator app first.<br>
+                    <a href="/employee/enroll-totp" class="alert-link">Click here to enroll TOTP</a>
+                </div>
+
+                <!-- Test Accounts Info -->
+                <div class="alert alert-info small">
+                    <strong><i class="bi bi-info-circle"></i> Test Accounts:</strong><br>
+                    sarah / password123 (HR)<br>
+                    adam / password123 (IT Support)<br>
+                    ivy / password123 (Sales)<br>
+                    lucas / password123 (Admin)
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="/" class="btn btn-link">
+                <i class="bi bi-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

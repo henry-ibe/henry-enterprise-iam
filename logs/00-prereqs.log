@@ -208,3 +208,157 @@ Operating System: Red Hat Enterprise Linux 9.6 (Plow)
   Hardware Model: c7i-flex.large
 Firmware Version: 1.0
 [0;32m✅ All prerequisites passed. System is ready.[0m
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo, nmcli, lsattr)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[1;33mDNS lookup failed; attempting automated self-heal...[0m
+[0;32mDNS restored via resolv.conf + NetworkManager.[0m
+
+[+] 🕰️ Verifying chronyd time sync status...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Sun Oct 12 02:07:03 2025
+System time     : 0.000004174 seconds fast of NTP time
+Last offset     : +0.000015639 seconds
+RMS offset      : 0.000075232 seconds
+Frequency       : 0.692 ppm fast
+Residual freq   : -0.035 ppm
+Skew            : 1.306 ppm
+Root delay      : 0.000178101 seconds
+Root dispersion : 0.000066734 seconds
+Update interval : 16.2 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec298850e63769618fb341d6827fb33c
+         Boot ID: 5d90bf7f2d31452c945ed5719d7e0213
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: c7i-flex.large
+Firmware Version: 1.0
+[0;32m✅ All prerequisites passed. System is ready.[0m
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo, nmcli, lsattr)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[1;33mDNS lookup failed; attempting automated self-heal...[0m
+[0;32mDNS restored via resolv.conf + NetworkManager.[0m
+
+[+] 🕰️ Verifying chronyd time sync status...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Wed Oct 15 00:50:35 2025
+System time     : 0.000000290 seconds fast of NTP time
+Last offset     : -0.000001077 seconds
+RMS offset      : 0.000005220 seconds
+Frequency       : 0.919 ppm slow
+Residual freq   : -0.000 ppm
+Skew            : 0.045 ppm
+Root delay      : 0.000109944 seconds
+Root dispersion : 0.000029159 seconds
+Update interval : 16.2 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec298850e63769618fb341d6827fb33c
+         Boot ID: cdfdd6f20f8440fd8b7bd9b099034c12
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: c7i-flex.large
+Firmware Version: 1.0
+[0;32m✅ All prerequisites passed. System is ready.[0m
+
+[0;34m═══════════════════════════════════════════════════════════════[0m
+[0;34m  Phase 00 - System Prerequisites Check[0m
+[0;34m  Henry Enterprise IAM - Flask + Keycloak Architecture[0m
+[0;34m═══════════════════════════════════════════════════════════════[0m
+
+
+[+] 🔧 Checking OS version...
+[0;32m✓ RHEL 9 confirmed[0m
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+[0;32m✓ User: root[0m
+
+[+] 📦 Checking required tools...
+[0;32m✓ curl and sudo installed[0m
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+[0;32m✓ Internet connectivity confirmed[0m
+
+[+] 🌐 Checking DNS resolution...
+[1;33mDNS lookup failed; attempting automated self-heal...[0m
+[0;32mDNS restored via resolv.conf + NetworkManager.[0m
+
+[+] 🕰️ Verifying chronyd time sync...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Thu Oct 16 05:55:25 2025
+System time     : 0.000003105 seconds fast of NTP time
+Last offset     : +0.000002768 seconds
+RMS offset      : 0.000031938 seconds
+Frequency       : 1.512 ppm fast
+Residual freq   : +0.020 ppm
+Skew            : 0.193 ppm
+Root delay      : 0.000131991 seconds
+Root dispersion : 0.000031706 seconds
+Update interval : 16.1 seconds
+Leap status     : Normal
+[0;32m✓ Time synchronization active[0m
+
+[+] 🔐 Checking SELinux status...
+   SELinux mode: Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+[0;32m✓ Hostname already correct[0m
+
+[+] 🐍 Checking Python 3.9+...
+[0;32m✓ Python 3.9.21 installed[0m
+
+[+] 📦 Checking pip3...
+[1;33m⚠ pip3 not found. Install with: sudo dnf install python3-pip[0m
+
+[+] 🐳 Checking Docker/Podman...
+[0;32m✓ Docker installed[0m
+[0;32m✓ Docker service is running[0m
+
+[+] 💾 Checking system resources...
+[1;33m⚠ Memory: 3GB (4GB+ recommended for optimal performance)[0m
+[0;32m✓ Disk space: 12GB available[0m
+
+[+] 🔌 Checking port availability...
+
+[1;33m⚠ Port 5000 (Flask Portal) is in use[0m

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Factor Authentication - Henry Enterprise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .totp-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 500px;
+            width: 100%;
+        }
+        .totp-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .totp-icon i {
+            font-size: 40px;
+            color: white;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .username-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        .username-display strong {
+            color: #667eea;
+            font-size: 18px;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-verify {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: transform 0.3s;
+            width: 100%;
+            color: white;
+        }
+        .btn-verify:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .help-text {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #555;
+        }
+        .help-text i {
+            color: #2196F3;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="totp-container">
+        <div class="totp-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        
+        <h2>Two-Factor Authentication</h2>
+        <p class="subtitle">Enter the 6-digit code from your authenticator app</p>
+        
+        <div class="username-display">
+            <i class="bi bi-person-circle"></i>
+            Authenticating: <strong>{{ username }}</strong>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'danger' else 'info' if category == 'info' else 'success' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-circle' if category == 'danger' else 'info-circle' if category == 'info' else 'check-circle' }}"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('main.totp_verify') }}" id="totpForm">
+            <div class="mb-4">
+                <label for="totp_code" class="form-label">
+                    <i class="fas fa-mobile-alt"></i> Authenticator Code
+                </label>
+                <input type="text" 
+                       class="form-control form-control-lg" 
+                       id="totp_code" 
+                       name="totp_code" 
+                       placeholder="000000" 
+                       maxlength="6" 
+                       pattern="[0-9]{6}"
+                       autocomplete="off"
+                       autofocus
+                       required>
+                <div class="form-text">Enter the 6-digit code from Google Authenticator or similar app</div>
+            </div>
+
+            <button type="submit" class="btn btn-verify">
+                <i class="fas fa-check-circle"></i> Verify & Access Dashboard
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a href="{{ url_for('main.employee_login') }}">
+                <i class="fas fa-arrow-left"></i> Back to Login
+            </a>
+        </div>
+
+        <div class="help-text">
+            <i class="fas fa-info-circle"></i>
+            <strong>Need help?</strong> Open your authenticator app (Google Authenticator, Authy, etc.) 
+            and enter the 6-digit code shown for Henry Enterprise Portal.
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-submit form when 6 digits are entered
+        document.getElementById('totp_code').addEventListener('input', function(e) {
+            // Remove non-numeric characters
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Auto-submit when 6 digits entered
+            if (this.value.length === 6) {
+                setTimeout(() => {
+                    document.getElementById('totpForm').submit();
+                }, 300);
+            }
+        });
+
+        // Prevent paste of non-numeric
+        document.getElementById('totp_code').addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericOnly = pastedText.replace(/[^0-9]/g, '').substring(0, 6);
+            this.value = numericOnly;
+            
+            if (numericOnly.length === 6) {
+                setTimeout(() => {
+                    document.getElementById('totpForm').submit();
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>

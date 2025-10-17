@@ -1,27 +1,48 @@
-# Environment files with secrets
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Flask
+instance/
+.webassets-cache
+/tmp/flask_sessions/
+
+# Environment variables
 .env
 *.env
-.env.*
 
 # Logs
-logs/
 *.log
+logs/*.log
 
-# Docker volumes data
-**/data/
-**/postgres-data/
-**/redis-data/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# SSL certificates
-*.pem
-*.key
-*.crt
+# OS
+.DS_Store
+Thumbs.db
 
 # Temporary files
 *.tmp
-*.swp
-*~
+*.bak
+*.backup
 
-# OS files
-.DS_Store
-Thumbs.db
+# Secrets (important!)
+*secret*
+*password*
+*credentials*
+
+# But keep our demo totp_secrets.py for portfolio
+!phase50-portal/totp_secrets.py

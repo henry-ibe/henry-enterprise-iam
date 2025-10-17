@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}HR Dashboard - Henry Enterprise LLC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success">
+                <h4><i class="bi bi-person-check"></i> Welcome, {{ user.full_name }}!</h4>
+                <p class="mb-0">HR Department | {{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-people"></i> HR Dashboard</h2>
+            <p class="text-muted">Human Resources Management Portal</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="bi bi-people display-4"></i>
+                    <h3>127</h3>
+                    <p>Total Employees</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="bi bi-person-plus display-4"></i>
+                    <h3>8</h3>
+                    <p>New Hires (Q4)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check display-4"></i>
+                    <h3>15</h3>
+                    <p>Leave Requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="bi bi-cash display-4"></i>
+                    <h3>Due</h3>
+                    <p>Payroll Processing</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- HR Tools -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="bi bi-tools"></i> HR Tools</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-badge"></i> Employee Management
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-calendar3"></i> Leave Management
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-cash-stack"></i> Payroll System
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-graph-up"></i> Performance Reviews
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-file-earmark-text"></i> HR Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5><i class="bi bi-clock-history"></i> Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            New hire onboarding completed - John Doe
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-calendar-x text-warning"></i>
+                            Leave request pending approval - Jane Smith
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-file-check text-primary"></i>
+                            Q4 performance reviews due next week
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-cash text-success"></i>
+                            Payroll processed successfully
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> Your Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Department:</strong> {{ user.department }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Groups:</strong> {{ user.groups|join(', ') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

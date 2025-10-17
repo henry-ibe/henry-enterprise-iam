@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Dashboard - Henry Enterprise LLC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <h4><i class="bi bi-person-check"></i> Welcome, {{ user.full_name }}!</h4>
+                <p class="mb-0">Sales Department | {{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-graph-up-arrow"></i> Sales Dashboard</h2>
+            <p class="text-muted">Sales Performance & CRM</p>
+        </div>
+    </div>
+
+    <!-- Sales Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="bi bi-currency-dollar display-4"></i>
+                    <h3>$1.2M</h3>
+                    <p>Q4 Revenue</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="bi bi-briefcase display-4"></i>
+                    <h3>24</h3>
+                    <p>Active Deals</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="bi bi-people display-4"></i>
+                    <h3>156</h3>
+                    <p>Total Clients</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="bi bi-graph-up display-4"></i>
+                    <h3>18%</h3>
+                    <p>Growth Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Sales Tools -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="bi bi-tools"></i> Sales Tools</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-lines-fill"></i> CRM System
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-clipboard-data"></i> Sales Pipeline
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-file-earmark-text"></i> Proposals & Quotes
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-graph-up"></i> Sales Analytics
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-trophy"></i> Commission Calculator
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Opportunities -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5><i class="bi bi-lightning"></i> Hot Opportunities</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            Acme Corp - Cloud Migration ($250K)
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            Tech Startup - DevOps Setup ($180K)
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-star text-secondary"></i>
+                            Global Inc - IAM Solution ($320K)
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-star text-secondary"></i>
+                            Local Business - Infrastructure ($95K)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> Your Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Department:</strong> {{ user.department }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Groups:</strong> {{ user.groups|join(', ') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

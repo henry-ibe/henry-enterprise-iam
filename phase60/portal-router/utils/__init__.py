@@ -1,7 +1,7 @@
 """
-Utility modules for portal router
+Utils package for Portal Router
+Contains authentication and logging helpers.
 """
-from .auth import extract_roles, validate_headers, get_primary_role
-from .logging_config import setup_logging
 
-__all__ = ['extract_roles', 'validate_headers', 'get_primary_role', 'setup_logging']
+__all__ = ["auth", "logging_config"]
+
