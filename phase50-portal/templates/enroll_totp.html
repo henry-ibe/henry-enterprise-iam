@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}TOTP Enrollment - Henry Enterprise{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3><i class="bi bi-shield-check"></i> Two-Factor Authentication Setup</h3>
+                    <p class="mb-0">Scan QR codes with Google Authenticator</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-info-circle"></i> Instructions:</strong>
+                        <ol class="mb-0 mt-2">
+                            <li>Download <strong>Google Authenticator</strong> on your phone (iOS/Android)</li>
+                            <li>Open the app and tap <strong>"+"</strong> to add an account</li>
+                            <li>Select <strong>"Scan QR Code"</strong></li>
+                            <li>Scan the QR code for your username below</li>
+                            <li>The app will start generating 6-digit codes every 30 seconds</li>
+                        </ol>
+                    </div>
+
+                    <div class="row">
+                        {% for username, data in qr_codes.items() %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="bi bi-person"></i> {{ username }}</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <img src="data:image/png;base64,{{ data.qr_code }}" alt="QR Code for {{ username }}" class="img-fluid mb-3" style="max-width: 250px;">
+                                    <p class="text-muted small">
+                                        <strong>Manual Entry Key:</strong><br>
+                                        <code>{{ data.secret }}</code>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="alert alert-success">
+                        <strong><i class="bi bi-check-circle"></i> After scanning:</strong><br>
+                        Go to <a href="/employee/login" class="alert-link">Employee Login</a> and use the 6-digit code from your authenticator app!
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="/" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

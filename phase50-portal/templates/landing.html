@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Henry Enterprise LLC - Cloud Computing Excellence{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="jumbotron bg-light p-5 rounded">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4">
+                    <i class="bi bi-cloud-check text-primary"></i>
+                    Henry Enterprise LLC
+                </h1>
+                <p class="lead">Delivering Enterprise Cloud Solutions for Modern Businesses</p>
+                <hr class="my-4">
+                <p>
+                    We specialize in cloud infrastructure, DevOps automation, and 
+                    Identity & Access Management (IAM) solutions that help organizations 
+                    scale securely and efficiently.
+                </p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-building" style="font-size: 8rem; color: #3498db;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Section -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">Our Services</h2>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-cloud-upload display-3 text-primary mb-3"></i>
+                    <h5 class="card-title">Cloud Infrastructure</h5>
+                    <p class="card-text">
+                        Scalable, reliable cloud infrastructure solutions using 
+                        AWS, Azure, and Google Cloud Platform.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-gear-fill display-3 text-success mb-3"></i>
+                    <h5 class="card-title">DevOps Solutions</h5>
+                    <p class="card-text">
+                        CI/CD pipelines, infrastructure as code, and 
+                        automated deployment strategies.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-shield-lock display-3 text-danger mb-3"></i>
+                    <h5 class="card-title">IAM & Security</h5>
+                    <p class="card-text">
+                        Enterprise identity management, single sign-on (SSO), 
+                        and comprehensive security solutions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Portal CTA -->
+    <div class="row mt-5 mb-5">
+        <div class="col-md-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center p-5">
+                    <h3><i class="bi bi-person-lock"></i> Employee Portal</h3>
+                    <p class="lead mb-4">
+                        Access internal systems, departmental tools, and company resources
+                    </p>
+                    <a href="/employee/login" class="btn btn-light btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Employee Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="row mt-5 mb-5">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">Contact Us</h2>
+            <div class="text-center">
+                <p class="lead">
+                    <i class="bi bi-envelope"></i> Email: contact@henry-enterprise.com<br>
+                    <i class="bi bi-telephone"></i> Phone: (555) 123-4567<br>
+                    <i class="bi bi-geo-alt"></i> Location: Salt Lake City, UT
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

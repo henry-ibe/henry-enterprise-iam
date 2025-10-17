@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Henry Enterprise LLC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h4><i class="bi bi-person-check"></i> Welcome, {{ user.full_name }}!</h4>
+                <p class="mb-0">System Administrator | {{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-shield-lock"></i> Admin Dashboard</h2>
+            <p class="text-muted">System Administration & Security</p>
+        </div>
+    </div>
+
+    <!-- System Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="bi bi-people display-4"></i>
+                    <h3>127</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="bi bi-check-circle display-4"></i>
+                    <h3>98.9%</h3>
+                    <p>System Health</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="bi bi-shield-exclamation display-4"></i>
+                    <h3>5</h3>
+                    <p>Security Alerts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <i class="bi bi-database display-4"></i>
+                    <h3>2.4TB</h3>
+                    <p>Data Storage</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Admin Tools -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5><i class="bi bi-tools"></i> System Administration</h5>
+                </div>
+                <div class="row g-0">
+                    <div class="col-md-6">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-people"></i> User Management
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-shield-lock"></i> Access Control
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-server"></i> Server Management
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-database"></i> Database Admin
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-file-earmark-lock"></i> Security Logs
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-gear"></i> System Configuration
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Logs -->
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5><i class="bi bi-clock-history"></i> Security Audit Log (Last 50 Events)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-dark sticky-top">
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Event</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if audit_logs %}
+                                    {% for log in audit_logs %}
+                                        <tr>
+                                            <td colspan="3" class="font-monospace small">{{ log }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            No audit logs available yet
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> Your Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Department:</strong> {{ user.department }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Groups:</strong> {{ user.groups|join(', ') }}</p>
+                    <p><strong>Admin Level:</strong> <span class="badge bg-danger">Full Access</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

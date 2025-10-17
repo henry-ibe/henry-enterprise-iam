@@ -54,3 +54,144 @@ Operating System: Red Hat Enterprise Linux 9.6 (Plow)
 Firmware Version: 1.0
 
 [+] ✅ All prerequisites passed. System is ready.
+
+[+] 🔧 Checking OS version...
+
+[+] 🧑‍💼 Checking user (ec2-user or root)...
+
+[+] 📦 Checking required tools (curl, sudo, nmcli, lsattr)...
+
+[+] 📡 Checking outbound internet (ping 1.1.1.1)...
+
+[+] 🌐 Checking DNS resolution...
+[0;32mDNS looks good.[0m
+
+[+] 🕰️ Verifying chronyd time sync status...
+Reference ID    : A9FEA97B (169.254.169.123)
+Stratum         : 2
+Ref time (UTC)  : Mon Oct 13 02:39:35 2025
+System time     : 0.000000511 seconds slow of NTP time
+Last offset     : +0.000000093 seconds
+RMS offset      : 0.000000754 seconds
+Frequency       : 0.483 ppm fast
+Residual freq   : -0.000 ppm
+Skew            : 0.014 ppm
+Root delay      : 0.000111922 seconds
+Root dispersion : 0.000040201 seconds
+Update interval : 16.3 seconds
+Leap status     : Normal
+
+[+] 🔐 Checking SELinux status...
+Enforcing
+
+[+] 📛 Setting hostname to ipa1.henry-iam.internal...
+ Static hostname: ipa1.henry-iam.internal
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: ec298850e63769618fb341d6827fb33c
+         Boot ID: 5d90bf7f2d31452c945ed5719d7e0213
+  Virtualization: amazon
+Operating System: Red Hat Enterprise Linux 9.6 (Plow)
+     CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+          Kernel: Linux 5.14.0-570.22.1.el9_6.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Amazon EC2
+  Hardware Model: c7i-flex.large
+Firmware Version: 1.0
+[0;32m✅ All prerequisites passed. System is ready.[0m
+
+[0;34m═══════════════════════════════════════════════════════════════[0m
+[0;34m  Phase 00 - System Prerequisites (Auto-Install)[0m
+[0;34m  Henry Enterprise IAM - Flask + Keycloak Architecture[0m
+[0;34m═══════════════════════════════════════════════════════════════[0m
+
+
+[+] 1/15 🔧 Checking OS version...
+[0;32m  ✓ RHEL 9 confirmed[0m
+
+[+] 2/15 🧑‍💼 Checking user privileges...
+[0;32m  ✓ User: root (sufficient privileges)[0m
+
+[+] 3/15 📦 Checking core system tools...
+[0;32m  ✓ curl already installed[0m
+[1;33m  ⚙ Installing wget...[0m
+[0;32m  ✓ wget installed successfully[0m
+[1;33m  ⚙ Installing net-tools...[0m
+[0;32m  ✓ net-tools installed successfully[0m
+
+[+] 4/15 📡 Checking network connectivity...
+[0;32m  ✓ Internet connectivity confirmed[0m
+
+[+] 5/15 🌐 Checking DNS resolution...
+[0;32m  ✓ DNS resolution working[0m
+
+[+] 6/15 🕰️ Ensuring time synchronization...
+[0;32m  ✓ Time synchronization active[0m
+
+[+] 7/15 🔐 Checking SELinux...
+[0;32m  ✓ SELinux: Enforcing (secure)[0m
+
+[+] 8/15 📛 Configuring hostname...
+[0;32m  ✓ Hostname already correct: ipa1.henry-iam.internal[0m
+
+[+] 9/15 🐍 Checking Python 3.9+...
+[0;32m  ✓ Python 3.9.21 (compatible)[0m
+
+[+] 10/15 📦 Ensuring pip3 is installed...
+[1;33m  ⚙ Installing python3-pip...[0m
+[0;32m  ✓ python3-pip installed successfully[0m
+[1;33m  ⚙ Upgrading pip to latest version...[0m
+[0;32m  ✓ pip3 ready[0m
+
+[+] 11/15 🐳 Ensuring container engine...
+[0;32m  ✓ Docker detected[0m
+[0;32m  ✓ Docker service running[0m
+
+[+] 12/15 💾 Checking system resources...
+[1;33m  ⚠ Memory: 3GB (4GB+ recommended, but will work)[0m
+[0;32m  ✓ Disk: 12GB available[0m
+
+[+] 13/15 🔌 Checking port availability...
+
+[1;33m  ⚠ Port 5000 in use[0m
+    Process: docker-proxy (PID: 2359)
+[1;33m    Keeping docker-proxy running (managed service)[0m
+[1;33m    Flask will use alternate port 5001[0m
+[1;33m  ⚠ Port 8180 in use[0m
+    Process: docker-proxy (PID: 2670)
+[1;33m    Keeping docker-proxy running (managed service)[0m
+[1;33m  ⚠ Port 8501 in use[0m
+    Process: docker-proxy (PID: 2422)
+[1;33m    Keeping docker-proxy running (managed service)[0m
+[1;33m  ⚠ Port 8502 in use[0m
+    Process: docker-proxy (PID: 2604)
+[1;33m    Keeping docker-proxy running (managed service)[0m
+[1;33m  ⚠ Port 8503 in use[0m
+    Process: docker-proxy (PID: 2236)
+[1;33m    Keeping docker-proxy running (managed service)[0m
+[1;33m  ⚠ Port 8504 in use[0m
+    Process: docker-proxy (PID: 2636)
+[1;33m    Keeping docker-proxy running (managed service)[0m
+
+[+] 14/15 📁 Creating project directories...
+[0;32m  ✓ Directory structure ready[0m
+
+[+] 15/15 🔥 Configuring firewall (if active)...
+[0;32m  ✓ Firewall inactive (development mode)[0m
+
+[0;34m═══════════════════════════════════════════════════════════════[0m
+[0;32m✅ Prerequisites Complete![0m
+[0;34m═══════════════════════════════════════════════════════════════[0m
+
+System Summary:
+  ✓ OS: RHEL 9
+  ✓ Hostname: ipa1.henry-iam.internal
+  ✓ Python: 3.9.21
+  ✓ Container: docker
+  ✓ Memory: 3GB
+  ✓ Disk: 12GB
+  ✓ Flask Port: 5001
+  ✓ Keycloak Port: 8180
+
+Ready for Phase 20: FreeIPA Installation
+

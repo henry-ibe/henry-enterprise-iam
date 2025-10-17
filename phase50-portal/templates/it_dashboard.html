@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}IT Support Dashboard - Henry Enterprise LLC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4><i class="bi bi-person-check"></i> Welcome, {{ user.full_name }}!</h4>
+                <p class="mb-0">IT Support Department | {{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-laptop"></i> IT Support Dashboard</h2>
+            <p class="text-muted">Infrastructure & Support Management</p>
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="bi bi-server display-4"></i>
+                    <h3>98.9%</h3>
+                    <p>System Uptime</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="bi bi-ticket-detailed display-4"></i>
+                    <h3>12</h3>
+                    <p>Open Tickets</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-danger text-white">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-triangle display-4"></i>
+                    <h3>2</h3>
+                    <p>Critical Alerts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="bi bi-people display-4"></i>
+                    <h3>127</h3>
+                    <p>Active Users</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- IT Tools -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="bi bi-tools"></i> IT Tools & Systems</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-ticket"></i> Support Ticket System
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-lock"></i> User Access Management
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-hdd-network"></i> Network Monitoring
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-cloud"></i> Cloud Infrastructure
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-shield-lock"></i> Security Console
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Health -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5><i class="bi bi-activity"></i> System Health</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            FreeIPA Server: <span class="badge bg-success">Healthy</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            Keycloak SSO: <span class="badge bg-success">Healthy</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                            Database Server: <span class="badge bg-warning">High Load</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            Web Services: <span class="badge bg-success">Healthy</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> Your Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Department:</strong> {{ user.department }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Groups:</strong> {{ user.groups|join(', ') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
