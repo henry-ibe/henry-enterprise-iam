@@ -3,6 +3,8 @@ from app.auth import authenticate_ldap, verify_totp_code, AuthenticationError, l
 from app.models import User
 from functools import wraps
 from config import Config
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from app.metrics import track_login_attempt, track_successful_auth
 
 main_bp = Blueprint('main', __name__)
 
@@ -53,6 +55,7 @@ def employee_login():
         
         if not all([username, password, department]):
             flash('Please fill in all required fields', 'danger')
+            track_login_attempt(username, department, 'missing_fields')
             return render_template('login.html', departments=list(Config.DEPARTMENT_GROUPS.keys()),
                                  username=username, department=department)
         
@@ -70,11 +73,16 @@ def employee_login():
                 'timestamp': user_data['timestamp']
             }
             
+            # Track login attempt - LDAP succeeded
+            track_login_attempt(username, department, 'ldap_success')
+            
             # STEP 2: Redirect to TOTP verification page
             flash('Credentials verified. Please enter your authenticator code.', 'info')
             return redirect(url_for('main.totp_verify'))
             
         except AuthenticationError as e:
+            # Track failed login attempt
+            track_login_attempt(username, department, 'ldap_failed')
             flash(str(e), 'danger')
             return render_template('login.html', departments=list(Config.DEPARTMENT_GROUPS.keys()),
                                  username=username, department=department)
@@ -114,11 +122,17 @@ def totp_verify():
             session['user'] = user.to_dict()
             session.permanent = True
             
+            # Track successful complete authentication
+            track_successful_auth(pending['username'], pending['department'])
+            track_login_attempt(pending['username'], pending['department'], 'complete_success')
+            
             flash(f'Welcome, {user.full_name}!', 'success')
             dashboard_url = Config.DEPARTMENT_DASHBOARDS.get(pending['department'], '/')
             return redirect(dashboard_url)
             
         except AuthenticationError as e:
+            # Track TOTP failure
+            track_login_attempt(pending['username'], pending['department'], 'totp_failed')
             flash(str(e), 'danger')
             return render_template('totp_verify.html', username=pending['username'])
     
@@ -159,6 +173,32 @@ def enroll_totp():
         }
     
     return render_template('enroll_totp.html', qr_codes=qr_codes)
+
+@main_bp.route('/metrics')
+def metrics():
+    """
+    Prometheus metrics endpoint
+    Exposes application metrics for scraping by Prometheus
+    
+    Metrics exposed:
+    - henry_portal_login_attempts_total: Total login attempts by status, department, username
+    - henry_portal_ldap_auth_total: LDAP authentication attempts
+    - henry_portal_totp_verification_total: TOTP verification attempts
+    - henry_portal_unauthorized_access_total: Unauthorized department access attempts
+    - henry_portal_invalid_credentials_total: Failed login attempts with invalid credentials
+    - henry_portal_successful_auth_total: Successful complete authentications
+    - henry_portal_logout_total: User logout events
+    - henry_portal_ldap_response_seconds: LDAP response time histogram
+    - henry_portal_totp_validation_seconds: TOTP validation time histogram
+    - henry_portal_auth_duration_seconds: Complete authentication duration
+    - henry_portal_active_sessions: Number of active user sessions
+    - henry_portal_pending_totp_verifications: Pending TOTP verifications
+    - henry_portal_app_info: Application information
+    
+    Access this endpoint at: http://localhost:5000/metrics
+    Prometheus will scrape this endpoint every 15 seconds
+    """
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 @main_bp.route('/logout')
 def logout():
