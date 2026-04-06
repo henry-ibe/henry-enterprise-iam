@@ -46,3 +46,6 @@ Thumbs.db
 
 # But keep our demo totp_secrets.py for portfolio
 !phase50-portal/totp_secrets.py
+.env
+cookies.txt
+*.sh~
