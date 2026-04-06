@@ -1,237 +1,256 @@
-Project Sentinel: Henry Enterprise Cloud IAM & Zero-Trust Identity Platform
-Overview
-
-Project Sentinel is a production-grade, cloud-ready Identity and Access Management (IAM) framework developed by Henry Enterprise LLC.
-It simulates how a modern enterprise implements centralized identity, Zero Trust principles, multi-factor authentication (MFA), and role-based access control (RBAC) across multiple departments in a secure and auditable environment.
-
-The project is deployed step-by-step on a Red Hat Enterprise Linux 9 (RHEL 9) EC2 instance using the AWS Free Tier.
-Each phase is automated using modular shell scripts that can be reused, extended, or integrated into enterprise pipelines.
-
-The target use case is an internal employee portal serving multiple departments—HR, IT Support, Sales, and Admin—each with its own secure dashboard. Unauthorized users cannot access or even view protected routes.
-Every authentication event, successful or failed, is logged and visualized through AWS CloudWatch, Prometheus, and Grafana.
-
-Vision
-
-Secure. Auditable. Role-Based. Cloud-Ready.
-
-Project Sentinel was designed to demonstrate enterprise IAM concepts in a real-world, reproducible environment.
-The focus is on:
-
-Zero Trust security model
-
-LDAP-backed user management
-
-OIDC-based Single Sign-On (SSO)
-
-Multi-Factor Authentication (TOTP/Google Authenticator)
-
-Centralized access logging and monitoring
-
-Core Technologies
-Component	Purpose	Key Features
-FreeIPA	LDAP + Kerberos backend	Centralized directory and group management
-Keycloak	OIDC Identity Provider	LDAP federation, MFA (TOTP), realm-based roles
-Flask + Apache (httpd)	Employee portal and reverse proxy	Role-based access control, secure web routing
-Podman / Docker	Container runtime	Isolated Keycloak and service environments
-Prometheus + Grafana	Monitoring stack	Real-time metrics, dashboards, and audit visualization
-AWS CloudWatch	Centralized logging	Authentication events and system metrics
-RHEL 9 EC2	Secure host	SELinux enforcement, chronyd time sync, systemd services
-Phase 1 — System Prerequisite Check
-
-Script: scripts/00-prereqs-check.sh
-
-Ensures the EC2 instance meets all requirements before any automation is executed.
-The script verifies:
-
-Operating system (RHEL 9)
-
-User privileges (ec2-user with sudo)
-
-Availability of essential tools (sudo, curl, ping)
-
-Outbound network connectivity
-
-Hostname configuration
-
-Time synchronization via chronyd (critical for Kerberos)
-
-SELinux status
-
-DNS resolution
-
-Outcome:
-System ready for IAM bootstrap, all pre-checks passed.
-
-Phase 2 — FreeIPA Bootstrap (With Auto Password Generation)
-
-Script: scripts/20-freeipa.sh
-
-Deploys and configures FreeIPA as the central LDAP/Kerberos identity backend.
-
-Tasks
-
-Auto-install FreeIPA in integrated mode
-
-Initialize domain: henry-iam.internal
-
-Create groups: hr, it_support, sales, admins
-
-Create demo users with random secure passwords
-
-Save credentials to /etc/henry-portal/freeipa-users.txt
-
-Outcome:
-FreeIPA web interface accessible at https://ipa1.henry-iam.internal, all users and groups visible.
-
-Phase 3 — Keycloak Setup (OIDC + LDAP + TOTP)
-
-Script: scripts/30-keycloak.sh
-
-Deploys a containerized Keycloak instance connected to FreeIPA through LDAP federation and enables TOTP-based MFA.
-
-Tasks
-
-Pull Keycloak image (v23+) using Podman
-
-Generate admin credentials automatically
-
-Configure LDAP bind to FreeIPA
-
-Enable TOTP authentication (Google Authenticator compatible)
-
-Create realm: security-project-1
-
-Create OIDC client: employee-portal
-
-Outcome:
-Keycloak admin console available at http://<host>:8180/.
-LDAP users can now authenticate via MFA.
-
-Phase 4 — Automated Realm, Roles, and Clients Setup
-
-Script: scripts/40-keycloak-init.sh
-
-Automates Keycloak configuration using kcadm.sh CLI tools.
-
-Tasks
-
-Create realm: henry-enterprise
-
-Define roles: HR, IT Support, Sales, Admin
-
-Create OIDC clients: employee-portal, hr-portal
-
-Configure:
-
-Token lifespans and session settings
-
-Secure redirect URIs
-
-Role mappings to JWT claims
-
-CORS and WebAuthn configuration
-
-Outcome:
-Keycloak realm and clients are provisioned automatically with mapped roles ready for OIDC-based authentication.
-
-Phase 5 — Direct LDAP Authentication Portal (Apache + Flask)
-
-Script: scripts/50-portal.sh
-
-Implements the first version of the employee login portal using direct LDAP authentication through FreeIPA.
-
-Tasks
-
-Deploy Flask web application under /employee/
-
-Configure Apache reverse proxy and systemd service
-
-Create role-based views for:
-
-/hr
-
-/it
-
-/sales
-
-/admin
-
-Log all access attempts to /var/log/henry-portal/access.log
-
-Outcome:
-Local LDAP authentication working for all user groups. Logs available for auditing.
-
-Phase 6 — OIDC-Protected Employee Portal (/portal)
-
-Script: scripts/60-portal-oidc.sh
-
-Integrates the employee portal with Keycloak OIDC authentication and role-based routing.
-
-Behavior
-
-User visits the company landing page.
-
-Clicking “Employee Portal” redirects them to Keycloak for login.
-
-Upon authentication and MFA verification, users are routed to their specific dashboard based on role mapping.
-
-Realm Role	Portal View
-hr	HR Dashboard (Employee data)
-it_support	IT Dashboard (Tickets, logs)
-sales	Sales Dashboard (Leads, CRM)
-admins	Admin Dashboard (User management, full access)
-
-Outcome:
-Each user experiences a distinct, role-based portal with MFA-protected access. Unauthorized access attempts are blocked and logged.
-
-Phase 7 — Observability and Audit Visualization
-
-Script: scripts/70-monitoring.sh
-
-Adds full observability using Prometheus and Grafana, with optional integration into AWS CloudWatch.
-
-Metrics Tracked
-
-Failed login attempts
-
-Invalid TOTP codes
-
-Unauthorized role access
-
-Login latency
-
-Successful authentication count
-
-Login activity by department
-
-Outcome:
-Real-time dashboards display authentication trends, performance metrics, and security analytics.
-
-Core Security Principles Demonstrated
-Control	Implementation
-Zero Trust	Every request authenticated; no implicit trust.
-Least Privilege	Role-based route enforcement for all users.
-Multi-Factor Authentication	TOTP integration via Keycloak.
-Auditable Access	Logs ingested into CloudWatch, Prometheus, and Grafana.
-Centralized Identity	FreeIPA (LDAP/Kerberos) integrated with Keycloak (OIDC).
-Defense in Depth	Apache reverse proxy, SELinux enforcement, SSL/TLS readiness.
-Outcome Summary
-
-Project Sentinel demonstrates the end-to-end lifecycle of a secure, cloud-native IAM system.
-It delivers:
-
-Centralized identity management
-
-MFA-enabled OIDC authentication
-
-Department-based role routing
-
-Full audit and monitoring visibility
-
-Cloud-ready automation with reusable scripts
-
-Author
-
-Henry Ibe
-Founder, Henry Enterprise LLC
-Cloud & Infrastructure Security Engineer
+# 🔐 Project Sentinel — Henry Enterprise Cloud IAM & Zero-Trust Identity Platform
+
+> A production-grade, cloud-native Identity and Access Management (IAM) system built on RHEL 9 EC2, implementing Zero Trust security, FreeIPA LDAP, Keycloak OIDC, MFA, role-based access control, and full observability — built as a senior DevOps/Security Engineering portfolio piece.
+
+[![Shell](https://img.shields.io/badge/Automation-Bash%20Scripts-4EAA25?logo=gnu-bash)](https://www.gnu.org/software/bash/)
+[![Keycloak](https://img.shields.io/badge/IAM-Keycloak%20v25-4B6EAF?logo=keycloak)](https://www.keycloak.org/)
+[![FreeIPA](https://img.shields.io/badge/LDAP-FreeIPA-CC0000?logo=redhat)](https://www.freeipa.org/)
+[![AWS](https://img.shields.io/badge/Cloud-AWS%20EC2-FF9900?logo=amazonaws)](https://aws.amazon.com/)
+[![RHEL](https://img.shields.io/badge/OS-RHEL%209-EE0000?logo=redhat)](https://www.redhat.com/)
+
+---
+
+## 📌 What Is This Project?
+
+Project Sentinel simulates how a modern enterprise secures its internal systems — the kind of IAM infrastructure you'd find at a bank, hospital, or government agency. It implements **Zero Trust principles** from the ground up: every request is authenticated, every user is authorized by role, and every access event is logged and visualized.
+
+The system serves a multi-department employee portal where HR, IT Support, Sales, and Admin users each get role-specific dashboards — and unauthorized users can't even see what they don't have access to.
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Employee / Browser                           │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ HTTPS
+┌──────────────────────────▼──────────────────────────────────────┐
+│                    Traefik Reverse Proxy                        │
+│              (Routing + TLS termination)                        │
+└──────┬────────────────────────────────────────┬─────────────────┘
+       │                                        │
+┌──────▼──────────┐                  ┌──────────▼──────────────┐
+│  OAuth2-Proxy   │◄────────────────►│  Keycloak (OIDC/SSO)   │
+│  (Auth Gateway) │                  │  + FreeIPA LDAP         │
+└──────┬──────────┘                  │  + TOTP MFA             │
+       │                             └─────────────────────────┘
+┌──────▼──────────────────────────────────────────────────────┐
+│                    Portal Router                             │
+│           (Smart role-based routing)                        │
+└──────┬──────────┬──────────────┬──────────────┬────────────┘
+       │          │              │              │
+  ┌────▼───┐ ┌───▼────┐ ┌──────▼──┐ ┌────────▼──┐
+  │   HR   │ │   IT   │ │  Sales  │ │   Admin   │
+  │Portal  │ │Portal  │ │  Portal │ │  Portal   │
+  └────────┘ └────────┘ └─────────┘ └───────────┘
+       │
+┌──────▼──────────────────────────────────────────────────────┐
+│              Prometheus + Grafana + CloudWatch               │
+│         (Auth events, login metrics, audit logs)            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Infrastructure:** RHEL 9 EC2 (AWS) · SELinux enforced · Podman containers · systemd services
+
+---
+
+## 🚀 Deployment Phases
+
+### Phase 1 — System Prerequisites (`scripts/00-prereqs-check.sh`)
+Validates the EC2 instance before any automation runs:
+- OS verification (RHEL 9)
+- sudo privileges check
+- Network connectivity
+- chronyd time sync (critical for Kerberos)
+- SELinux status
+- DNS resolution
+
+### Phase 2 — FreeIPA Bootstrap (`scripts/20-freeipa.sh`)
+Deploys centralized LDAP/Kerberos identity backend:
+- Auto-installs FreeIPA in integrated mode
+- Initializes domain: `henry-iam.internal`
+- Creates department groups: `hr`, `it_support`, `sales`, `admins`
+- Creates demo users with auto-generated secure passwords
+- Web UI accessible at `https://ipa1.henry-iam.internal`
+
+### Phase 3 — Keycloak Setup (`scripts/30-keycloak.sh`)
+Deploys containerized Keycloak connected to FreeIPA:
+- Keycloak v25 via Podman
+- LDAP federation to FreeIPA
+- TOTP MFA (Google Authenticator compatible)
+- Realm: `henry-enterprise`
+- OIDC client: `employee-portal`
+
+### Phase 4 — Realm & Role Configuration (`scripts/40-keycloak-init.sh`)
+Automates Keycloak setup via `kcadm.sh` CLI:
+- Creates realm: `henry-enterprise`
+- Defines roles: `HR`, `IT Support`, `Sales`, `Admin`
+- Configures OIDC clients with secure redirect URIs
+- Maps roles to JWT claims
+- Sets token lifespans and session policies
+
+### Phase 5 — Employee Portal (`scripts/50-portal-deploy.sh`)
+Deploys the Flask-based employee portal:
+- Apache reverse proxy + systemd service
+- Role-based route enforcement
+- Direct LDAP authentication (Phase 5a)
+- OIDC authentication via Keycloak (Phase 5b)
+- All access attempts logged to `/var/log/henry-portal/access.log`
+
+### Phase 6 — Full OIDC Stack (`phase60/`)
+Production-grade deployment with full service mesh:
+
+| Service | Purpose |
+|---|---|
+| Traefik | Reverse proxy and load balancer |
+| Keycloak | OIDC identity provider |
+| OAuth2-Proxy | Authentication gateway |
+| Redis | Session storage |
+| Portal Router | Smart role-based routing |
+| HR Dashboard | HR management portal |
+| IT Dashboard | IT support and ticketing |
+| Sales Dashboard | Sales CRM portal |
+| Admin Dashboard | Full system access |
+| Public Site | Unauthenticated landing page |
+| Prometheus | Metrics collection |
+
+**Role → Dashboard mapping:**
+
+| Role | Portal | Access Level |
+|---|---|---|
+| `hr` | HR Dashboard | Employee data, leave management |
+| `it_support` | IT Dashboard | Tickets, logs, system status |
+| `sales` | Sales Dashboard | Leads, pipeline, CRM |
+| `admins` | Admin Dashboard | Full access, user management |
+
+### Phase 7 — Observability (`phase70-monitoring/`)
+Full monitoring stack:
+- Prometheus metrics collection
+- Grafana dashboards
+- AWS CloudWatch integration
+- Metrics tracked: failed logins, invalid TOTP, unauthorized access, login latency, auth success by department
+
+---
+
+## 🛡️ Security Controls
+
+| Control | Implementation |
+|---|---|
+| Zero Trust | Every request authenticated — no implicit trust |
+| Least Privilege | Role-based route enforcement, no cross-role access |
+| MFA | TOTP via Keycloak (Google Authenticator) |
+| Centralized Identity | FreeIPA LDAP/Kerberos + Keycloak OIDC federation |
+| Audit Logging | All auth events → CloudWatch + Prometheus + Grafana |
+| Defense in Depth | Traefik → OAuth2-Proxy → Portal Router → Dashboard |
+| Host Security | SELinux enforced, chronyd time sync, systemd isolation |
+| Secret Management | Environment-based config, no hardcoded credentials |
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|---|---|
+| Identity Provider | FreeIPA (LDAP + Kerberos) |
+| SSO / OIDC | Keycloak v25 |
+| Auth Gateway | OAuth2-Proxy |
+| Reverse Proxy | Traefik |
+| Session Storage | Redis |
+| Portal | Python Flask + Apache httpd |
+| Containers | Podman / Docker |
+| Monitoring | Prometheus + Grafana + AWS CloudWatch |
+| OS | RHEL 9 (SELinux enforced) |
+| Cloud | AWS EC2 |
+| Automation | Bash (fully idempotent scripts) |
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# Clone the repo
+git clone https://github.com/henry-ibe/henry-enterprise-iam.git
+cd henry-enterprise-iam
+
+# Set up environment
+cp .env.example .env
+# Edit .env with your values
+
+# Deploy all phases in sequence
+chmod +x master-deploy.sh
+./master-deploy.sh
+
+# Or deploy Phase 6 (full OIDC stack) standalone
+cd phase60
+./start.sh
+./status.sh
+```
+
+**Prerequisites:** RHEL 9 EC2, sudo access, outbound internet, chronyd running
+
+---
+
+## 📁 Repository Structure
+
+```
+henry-enterprise-iam/
+├── scripts/
+│   ├── 00-prereqs-check.sh    # Pre-flight validation
+│   ├── 20-freeipa.sh          # FreeIPA LDAP bootstrap
+│   ├── 30-keycloak.sh         # Keycloak deployment
+│   ├── 40-keycloak-init.sh    # Realm/role/client setup
+│   ├── 50-portal-deploy.sh    # Employee portal
+│   ├── 50-nginx-proxy.sh      # Nginx reverse proxy
+│   └── 70-monitoring-deploy.sh # Observability stack
+├── phase50-portal/            # Flask portal application
+├── phase60/                   # Full OIDC stack (Docker Compose)
+│   ├── traefik/               # Reverse proxy config
+│   ├── keycloak/              # Realm configuration
+│   ├── oauth2-proxy/          # Auth gateway config
+│   ├── portal-router/         # Role-based routing app
+│   ├── dashboards/            # HR/IT/Sales/Admin portals
+│   ├── public-site/           # Unauthenticated landing page
+│   ├── docker-compose.yml
+│   ├── start.sh / stop.sh / status.sh
+│   └── README.md
+├── phase70-monitoring/        # Prometheus + Grafana setup
+├── logs/                      # Deployment logs
+├── master-deploy.sh           # One-command full deployment
+├── deploy-all.sh              # Alternative deploy script
+├── .env.example               # Environment template
+└── Project Sentinel*.pdf      # Full architecture whitepaper
+```
+
+---
+
+## 💡 What This Demonstrates
+
+| Skill | How It's Demonstrated |
+|---|---|
+| Enterprise IAM | FreeIPA + Keycloak federation with LDAP/Kerberos |
+| Zero Trust Architecture | Multi-layer auth: Traefik → OAuth2-Proxy → Portal Router |
+| OIDC / SSO | Full OIDC flow with JWT role claims and session management |
+| MFA Implementation | TOTP via Keycloak, Google Authenticator compatible |
+| Infrastructure Automation | 7 fully idempotent bash scripts, one-command deployment |
+| Observability | Auth event metrics, login dashboards, CloudWatch integration |
+| Container Orchestration | 12-service Docker Compose stack with Podman |
+| Linux Security | SELinux enforcement, systemd services, RHEL 9 hardening |
+| Secret Management | Environment-based config with no hardcoded credentials |
+
+---
+
+## 📄 Architecture Whitepaper
+
+Full design documentation available in `Project Sentinel_ Henry Enterprise Cloud IAM & Zero-Trust Identity Platform.pdf` — covers threat model, design decisions, and phase-by-phase implementation details.
+
+---
+
+## 👤 Author
+
+**Henry Ibe** — Systems & Cloud Infrastructure Engineer
+[![GitHub](https://img.shields.io/badge/GitHub-henry--ibe-181717?logo=github)](https://github.com/henry-ibe)
+
+---
+
+*This is a portfolio/lab project. Demo users and test credentials are for development only. Never use demo passwords in production.*
